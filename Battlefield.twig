@@ -9,7 +9,7 @@
 [/size]
 
 
-[size=3][color="#ff6633"]General Sergeants[/color]
+[size=3][color="#ff6633"]Clan Admins[/color]
 	{% for sergeant in division.generalSergeants %}
 		[profile={{ sergeant.clan_id }}][color={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/color][/profile]
 	{% else %}
