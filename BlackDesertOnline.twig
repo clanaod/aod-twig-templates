@@ -1,142 +1,111 @@
-{# Header w/ Div Image and Leadership #}
-[table='align:center,width: 850']
-    [tr]
-        [td=colspan:4]
-            [center]
-{# Division Image #}
-                [img]http://i.imgur.com/n460d57.png[/img]
-  
-                [size=5][color=#fff]NA Server[/color][/size]
-                [size=2](Check TS channel header for server channel)[/size]
+{# Header and Division Leadership #}
+[CENTER]
+[IMG]http://i.imgur.com/n460d57.png[/IMG]
 
-                [size=5][color=#00FF00][b][i][u]Division Leadership[/u][/i][/b][/color][/size]
-{# DIVISION LEADERSHIP #}
-                [size=4]
-{# CO / XO    #}{% for leader in division.leaders %}
-                    [profile={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/color][/profile] - {{ leader.position.name }}
-                    [size=1]IGF: {{leader.handle.pivot.value }}
-                    [/size]
-{#            #}{% endfor %}
-                [/size]
-{# GEN. SGTS  #}[size=3][color=#40E0D0]General Sergeants[/color][/size]
-{#            #}{% for sergeant in division.generalSergeants %}
-                    {% if not loop.first %}{{'
-                    '}}{% endif %}
-                    [size=3][profile={{ sergeant.clan_id }}][color={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/color][/profile][/size]
-                    [size=1]IGF: {{sergeant.handle.pivot.value }}[/size]
-{#            #}{% else %}
-                    [size=3]No general sergeants assigned[/size]
-{#            #}{% endfor %}
-            [/center]
-        [/td]
-    [/tr]
-[/table]
+[SIZE=5][COLOR=#FFF]NA Server[/COLOR][/SIZE]
+[SIZE=2](Check TS channel header for server channel)[/SIZE]
 
-{# PLATOONS #} 
-[table='align:center,width: 850']
-    [tr]
-{##}{% for platoon in division.platoons %}
-        [td]
-            [size=3][color=#40E0D0]{{  division.locality.platoon_leader }}[/color][/size]
-            [profile={{ platoon.leader.clan_id }}]{{ platoon.leader.present().rankName }}[/profile]
-            [size=1]IGF: {{ platoon.leader.handle.pivot.value }}[/size]
-            
-{#        #}{% for squad in platoon.squads %}
-{# Add newline for all but the first squad #}
-                {% if not loop.first %}{{'
-                '}}{% endif %}
-                [size=3][color=#40E0D0]{{ division.locality.squad_leader }}[/color][/size] 
-                [profile={{ squad.leader.clan_id }}][color=#FFA500]{{ squad.leader.present().rankName }}[/color][/profile]
-                [size=1]IGF: {{ squad.leader.handle.pivot.value }}[/size]
-                {% set _squad_ldr_rctd_count_ = 0 %}
-{# Count Rctd #}{%- for member in squad.members -%}
-{#                #}{% if member.recruiter_id == squad.leader.clan_id %}
-                        {% set _squad_ldr_rctd_count_ = _squad_ldr_rctd_count_ + 1 %}
-{#                #}{% endif %}
-{#            #}{%- endfor -%}
-{# Print Leader's own Recruits in indented list #}
-{#            #}{%- if _squad_ldr_rctd_count_ > 0 -%}
-{#                #}[list=1]
-{#                #}{% for member in squad.members %}
-{#                    #}{% if member.recruiter_id == squad.leader.clan_id %}
-                        [*][profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile]
-                        [size=1]IGF: {{ member.handle.pivot.value|trim }}[/size]
-{#                    #}{% endif %}
-{#                #}{% endfor %}
-                    [/list]
-                {%- endif -%}
-{# Output newline if there wasn't a list of recruits #}
-                {% if _squad_ldr_rctd_count_ == 0 %}{{'
-                '}}{% endif %}
-{# Not Rctd   #}{% for member in squad.members %}
-{#                #}{% if member.recruiter_id != squad.leader.clan_id %}
-                    [profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile]
-                    [size=1]IGF: {{ member.handle.pivot.value|trim }}[/size]
-{#                #}{% endif %}
-                {% endfor %}
-            {% endfor %}
-        [/td]
-{##}{% endfor %}
-    [/tr]
-[/table]
-      
-      
-{# PART TIMERS #}
-  
+[SIZE=5][COLOR="#00FF00"][B][U]Division Leadership[/U][/B][/COLOR][/SIZE]
+[SIZE=4]
+	{% for leader in division.leaders %}
+		[PROFILE={{ leader.clan_id }}][COLOR={{ leader.rank.color }}]{{ leader.present().rankName }}[/COLOR][/PROFILE] - {{ leader.position.name}}
+		[SIZE=2]IGF: {{ leader.handle.pivot.value }}[/SIZE]
+	{% endfor %}
+[/SIZE]
+
+[SIZE=3][COLOR="#40E0D0"][B][U]General Sergeants[/U][/B][/COLOR]
+
+	{% for sergeant in division.generalSergeants %}
+		[PROFILE={{ sergeant.clan_id }}][COLOR={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/COLOR][/PROFILE]
+		[SIZE=2]IGF: {{ sergeant.handle.pivot.value }}[/SIZE]
+	{% else %}
+		[COLOR=#FFF]No General Sergeants Assigned[/COLOR]
+	{% endfor %}
+[/SIZE]
+[/CENTER]
+
+{% for platoon in division.platoons %}
+[TABLE="ALIGN: CENTER"]
+	[TR][TD][/TD][TD]
+
+	[CENTER][SIZE=4][COLOR="#40E0D0"]{{ platoon.name }}[/COLOR]
+	{% if platoon.leader %}
+	[PROFILE={{ platoon.leader.clan_id }}][COLOR={{ platoon.leader.rank.color }}]{{ platoon.leader.present().rankName }}[/COLOR][/PROFILE]
+	[SIZE=2]IGF: {{ platoon.leader.handle.pivot.value }}[/SIZE]
+	{% else %}
+	TBC
+	{% endif %}
+	[/CENTER][/SIZE]
+
+	[/TD][TD][/TD][/TR]
+[/TABLE]
+
+[TABLE="ALIGN: CENTER, WIDTH: 500"]
+[TR]
+	{% for squad in platoon.squads %}
+	[TD]
+		{% if squad.name %}
+			[SIZE=3][COLOR="#40E0D0"]{{ squad.name }}[/COLOR][/SIZE]
+		{% else %}
+			[SIZE=3][COLOR="#40E0D0"] TBC [/COLOR][/SIZE]
+		{% endif %}
+			{% if squad.leader %}
+				[SIZE=3][PROFILE={{ squad.leader.clan_id }}][COLOR='#FFA500']{{ squad.leader.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+				[SIZE=2]IGF: {{ squad.leader.handle.pivot.value }}[/SIZE]
+			{% else %}
+				TBA
+			{% endif %}
+
+	[SIZE=2]
+		{% for member in squad.members %}
+			[PROFILE={{ member.clan_id }}]{{ member.present().rankName }}[/PROFILE]
+			[SIZE=1]IGF: {{ member.handle.pivot.value }}[/SIZE]
+		{% endfor %}
+	[/SIZE]
+	[/TD]
+	[TD]     [/TD][TD]     [/TD][TD]     [/TD]
+	{% if loop.index is divisible by (3) %}
+	[/TR][TR]
+	{% endif %}
+	{% endfor %}
+	[/TR]
+
+[/TABLE]
+{% endfor %}
+
+
+
+{# Part Timers #}
+
+{% if (division.leave) %}
+	[center][size=4][color=#008000][b]Leaves of Absence[/b][/color][/size]
+	
+	{% for member in division.leave %}
+		{% if member.leave.expired %}
+			{{ member.present().rankName }} - [color=red]{{ member.leave.date }} (EXPIRED)[/color] - {{ member.leave.reason }}
+		{% else %}
+			{{ member.present().rankName }} - {{ member.leave.date }} - {{ member.leave.reason }}
+		{% endif %}
+    {% else %}
+    	No active Leaves of Absence at this time.
+	{% endfor %}
+	[/center]
+{% endif %}
+
+
 {% if division.partTimeMembers.count() > 0 %}
-[table='align:center,width: 850']
-    [tr]
-        [td=colspan:4]
-            [center][size=3][color=#40E0D0][b]Part Time Members[/b][/color][/size][/center]
-        [/td]
-    [/tr]
-    [tr]
-    	[td=colspan:4]
-        	[b][u]Important Note for Part-Timers[/u][/b]: Due to the hard size limitations of the in-game guild, you may log in one day and find yourself untagged. This is a normal occurance which regularly happens when we are approaching the capacity limit of the in-game guild and need to free up space for full time members, usually when we are coming up on a purge of inactive members. Your part-time membership is not revoked when this happens. If this happens to you and you want to be re-tagged, all you need to do is make sure that you are still listed as part-time on our division structure then drop by our TeamSpeak channels and ask an officer to be re-tagged in-game.
-        [/td]
-    [/tr]
-    [tr]
-{##}{% for partTimer in division.partTimeMembers %}
-        [td]
-            [profile={{ partTimer.clan_id }}]{{ partTimer.present().rankName }}[/profile]
-            [size=1]IGF: {{ partTimer.handle.pivot.value }}[/size]
-        [/td]
-{#    #}{% if loop.index is divisible by(4) %}
-    [/tr]
-    [tr]
-{#    #}{% endif %}
-{##}{% endfor %}
-    [/tr]
-[/table]
-{% endif %}
+	[center][size=3][color=#FFD700][b][i]Part Time Members[/i][/b][/color][/size][/center]
 
-{# MEMBERS ON LOA #}
-
-[table='align:center,width: 850']
-    [tr]
-        [td=colspan:4]
-            [center][size=3][color=#40E0D0][b]Leaves of Absence[/b][/color][/size][/center]
-        [/td]
-    [/tr]
-{% if division.leave.count() > 0 %}
-{##}{% for member in division.leave %}
-    [tr]
-        [td]
-            [profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile]
-        [/td]
-        [td]
-{#    #}{% if member.leave.expired %}
-            [color=red]{{ member.leave.date }} (EXPIRED)[/color]
-{#    #}{% else %}
-            {{ member.leave.date }}
-{#    #}{% endif %}
-        [/td]
-        [td]
-            {{ member.leave.reason }}
-        [/td]
-    [/tr]
-{##}{% endfor %}
-{% else %}
-    [tr][td]All members on station![/td][/tr]
+	[size=1][table='align:center'][tr]
+	{% for partTimer in division.partTimeMembers %}
+		[td]
+		[profile={{ partTimer.clan_id }}]{{ partTimer.present().rankName }}[/profile] - [color="#00B4FF"]{{ partTimer.handle.pivot.value }}[/color]
+		[/td]
+		{% if loop.index is divisible by(4) %}
+			[/tr]
+			[tr]
+		{% endif %}
+	{% endfor %}
+	[/tr]
+	[/table][/size]
 {% endif %}
-[/table]
