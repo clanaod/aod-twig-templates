@@ -1,24 +1,25 @@
 {# table for header images and division leadership #}
-[table='align:center,width: 850']
+[table='align:center,width: 1000']
     [tr]
-        [td=colspan:4]
+        [td=colspan:5]
             [center]
 {# division header #}
                 [img]http://i.imgur.com/SmLNYbp.gif[/img]
                 [img]http://i.imgur.com/Xiox0vy.png[/img]
-                [size=5][color=#00FF00][b][i][u]Division Leadership[/u][/i][/b][/color][/size]
+                [size=5][color=#d1733c][b][i][u]Division Leadership[/u][/i][/b][/color][/size]
                 [size=4]
 {# division leadership loop #}
 {#            #}{% for leader in division.leaders %}
                     [profile={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/color][/profile] - {{ leader.position.name }}
 {#            #}{% endfor %}
                 [/size]
-                [size=3][color=#40E0D0]General Sergeants[/color][/size]
+{#            #}{% if division.generalSergeants.count() > 0 %}
+
+                [size=5][color=#40E0D0][b][i][u]General Sergeants[/u][/i][/b][/color][/size]
+                
 {#            #}{% for sergeant in division.generalSergeants %}
-                [size=3][profile={{ sergeant.clan_id }}][color={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/color][/profile][/size]
-{#            #}{% else %}
-                [size=3]No general sergeants assigned[/size]
-{#            #}{% endfor %}
+                [size=4][profile={{ sergeant.clan_id }}][color={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/color][/profile][/size]
+{#            #}{% endfor %}{% endif %}
 
 
 
@@ -29,13 +30,14 @@
     [tr]
 {##}{% for platoon in division.platoons %}
         [td]
-            [size=3][color=#40E0D0]{{ division.locality.platoon_leader }}[/color][/size]
-            [profile={{ platoon.leader.clan_id }}]{{ platoon.leader.present().rankName }}[/profile]
+            [img]{{ platoon.logo }}[/img]
+			[size=3][color=#d1733c]{{ platoon.name }}[/color][/size]
+            [profile={{ platoon.leader.clan_id }}][color=#FFDE00]{{ platoon.leader.present().rankName }}[/color][/profile]
             [size=1]IGN: {{ platoon.leader.handle.pivot.value }}[/size]
 {#        #}{% for squad in platoon.squads %}
 
-                [size=3][color=#40E0D0]{{ division.locality.squad_leader }}[/color][/size]
-                [profile={{ squad.leader.clan_id }}][color=#FFA500]{{ squad.leader.present().rankName }}[/color][/profile]
+                [size=3][color=#af4822]{{ squad.name }}[/color][/size]
+                [profile={{ squad.leader.clan_id }}][color=#FFB600]{{ squad.leader.present().rankName }}[/color][/profile]
                 [size=1]IGN: {{ squad.leader.handle.pivot.value }}[/size]
 
                 [list=1]
@@ -59,12 +61,17 @@
 {##}{% endfor %}
     [/tr]
 [/table]
+
+
+
+
+
 {# part time members #}
 {% if division.partTimeMembers.count() > 0 %}
-[table='align:center,width: 850']
+[table='align:center,width: 1000']
     [tr]
         [td=colspan:4]
-            [center][size=3][color=#40E0D0][b]Part Time Members[/b][/color][/size][/center]
+            [center][size=3][color=#d1733c][b]Part Time Members[/b][/color][/size][/center]
         [/td]
     [/tr]
     [tr]
@@ -80,13 +87,18 @@
 {##}{% endfor %}
     [/tr]
 [/table]
+
+
+
+
+
 {% endif %}
 {# members on loa #}
 {% if division.leave.count() > 0 %}
-[table='width: 850']
+[table='align:center,width: 1000']
     [tr]
         [td=colspan:4]
-            [center][size=3][color=#40E0D0][b]Leaves of Absence[/b][/color][/size][/center]
+            [center][size=3][color=#d1733c][b]Leaves of Absence[/b][/color][/size][/center]
 		[/td]
 	[/tr]
 {##}{% for member in division.leave %}
