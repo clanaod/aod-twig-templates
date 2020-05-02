@@ -1,58 +1,57 @@
-{% set TBA = "TBD" %}
-[table='align:center,width: 1000'][tr][td]
+{% set TBA = "[COLOR=orange]TBA[/COLOR][/SIZE]" %}
+[table='align:center,width:700'][tr][td]
 [center]
 {# Division Leaders Header #}
-[size=6][color=#F04100][b][i][u]Division Leaders[/u][/i][/b][/color][/size]
-[size=5]
-{# iterate leaders #}
+[SIZE=6][COLOR=#F04100][B][I][U]Division Leaders[/U][/I][/B][/color][/size]
+[SIZE=5]
+{# iterate leader #}
 {% for leader in division.leaders %}
-	{{ leader.position.name }} - [profile={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/color][/profile] - {% if leader.handle %}[url={{ leader.handle.fullUrl }}]iRacing Profile[/url]
-    {%- endif -%}
+	{{leader.position.name}} - [profile={{leader.clan_id}}][color={{leader.rank.color}}]{{leader.present().rankName}}[/color][/profile] - {% if leader.handle %}[url={{leader.handle.fullUrl}}]iRacing Profile[/url]{%- endif -%}
 {% endfor %}
 [/size]
+[/td]
+[/tr]
+[/center]
+[/table]
 
-[/td][/tr][/center][/table]
-{# See special note about centering multiple platoons on line 58 #}
-
-{# iterate platoons #}
-[center]
+{# Iterate Platoons #}
 {% for platoon in division.platoons %}
-
+[table='align:center,width:800'][tr][td][center]
 	{% if platoon.name %}
-		[size=6][color=#F04100]{{ platoon.name }}[/color][/size]
+		[SIZE=6][COLOR=#F04100][b]{{platoon.name}}[/b][/COLOR][/SIZE]
 	{% endif %}
-	
-	[size=4][color=#FFA500]Platoon Leader:[/color] {% if platoon.leader %} [profile={{ platoon.leader.clan_id }}][color=#aff000] {{ platoon.leader.present().rankName }}[/color]  [/profile]  - {% if platoon.leader.handle %}[url={{ platoon.leader.handle.fullUrl }}]iRacing Profile[/url]
-    {%- endif -%}
+
+	[SIZE=4]
+	[COLOR=#FFA500]Platoon Leader: [/COLOR]{%if platoon.leader.handle.pivot.value %}
+	[PROFILE={{platoon.leader.clan_id}}]
+	[COLOR=#AFF000]{{platoon.leader.present().rankName}}[/COLOR][/PROFILE] - {% if platoon.leader.handle %}[url={{platoon.leader.handle.fullUrl}}]iRacing Profile[/url]{% endif %}
 	{% else %}
-		[color=orange]TBA[/color]
+		{{TBA}}
 	{% endif %}
-    [/size][/center]
+	[/SIZE][/td][/tr][/table][/center]
 
 	{# iterate squads #}
-    [table='align:center,width: 1000']
+	[table='align:center, width:800'][tr]
 	{% for squad in platoon.squads %}
-       [tr][td][size=3][color=#FFD700]{{ squad.name }}[/color][/size]
-           [size=3][color=#FFA500]Squad Leader:[/color]{% if squad.leader %} [profile={{ squad.leader.clan_id }}][color=#aff000] {{ squad.leader.present().rankName }}[/color][/profile] - {% if squad.leader.handle %}[url={{ squad.leader.handle.fullUrl }}]iRacing Profile[/url]
-    {%- endif -%}[/size]
-		{% else %} {# no squad leader #}
-        [tr][td]{{ TBA }}
-		{% endif %}
-		{# iterate squad members #}
-        [size=2][color=goldenrod]AOD Name - iRacing Profile Link[/color][list]
-{% for member in squad.members %}
-    [*][size=3][profile={{ member.clan_id }}][color=#00aff0]{{ member.present().rankName }}[/color][/profile] - {% if member.handle %}[url={{ member.handle.fullUrl }}]iRacing Profile[/url][/size]
-    {%- endif -%}
-{% endfor %}
-        [/size][/list][/td]
+		[td="width:50%"][center]
+			[SIZE=3][COLOR=#FFD700]{{squad.name}}[/COLOR][/SIZE]
+			[SIZE=3][COLOR=#FFA500]Squad Leader:[/COLOR]{% if squad.leader.handle.pivot.value %} 
+			[PROFILE={{squad.leader.clan_id}}][COLOR=#AFF000]{{ squad.leader.present().rankName}}[/COLOR][/PROFILE] - {% if squad.leader.handle %}[url={{squad.leader.handle.fullUrl}}]iRacing Profile[/url]{%- endif -%}[/SIZE]
+			{% else %} {# no squad leader assigned #}
+			{{TBA}}
+			{% endif %}
+			[size=2][color=goldenrod]AOD Name - iRacing Profile Link[/color][list]
+			{% for member in squad.members %}
+    		[*][size=2][profile={{ member.clan_id }}][color=#00aff0]{{ member.present().rankName }}[/color][/profile] - {% if member.handle %}[url={{ member.handle.fullUrl }}]iRacing Profile[/url][/size]{%- endif -%}
+			{% endfor %}
+        	[/size][/list]
+		[/td][/center]
 	{% endfor %}
-	[/td]
+	[/tr][/table]
 {% endfor %}
-[/tr][/table]
-{# If you want to un-center the single platoon in order to add a second and have them both be centered to the page, remove the [/center] on line 57 and paste it in the same place on line 20 (between [/tr] and [/table] #}
 
 {# iterate part time members #}
-[center][size=3][color=#F04100][b]Part Time Members[/b][/color][/size]
+[center][size=6][color=#F04100][b]Part Time Members[/b][/color][/size]
 		[list]
 		[size=2]
 		{%- for member in division.partTimeMembers -%}
@@ -63,7 +62,7 @@
 [/center]
 
 {# iterate leaves of absence #}
-[center][size=3][color=#F04100][b]Leaves of Absence[/b][/color][/size]
+[center][size=6][color=#F04100][b]Leaves of Absence[/b][/color][/size]
 	[color=#FFFFFF][size=2]
     {% for member in division.leave %}
 		{% if member.leave.expired %}
@@ -73,4 +72,4 @@
 		{% endif %}
 	{% endfor %}
 	[/size][/color]
-	[/center]
+[/center]
