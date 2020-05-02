@@ -1,95 +1,113 @@
 {% set TBD = "[color=red]TBD[/color]" %}
 {% set max_platoon = 3 %}
-[center][img]http://i.imgur.com/Loipf3u.png[/img]
-
-[IMG]http://i.imgur.com/dvDkFn6.png[/IMG]
-[size=5]{% for leader in division.leaders %}
-    [profile={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/color][/profile] - {{ leader.position.name }}
-	      {% endfor %}
-          {%- if division.leader.handle -%}
-              [size=1][url={{ division.leader.handle.fullURL }}][color=gold](STEAM)[/color][/url][/size]
-          {% else %}
-              [size=1][color=red](STEAM)[/color][/size]
-          {%- endif -%}
-[/size]
-
-[IMG]http://i.imgur.com/9eokkKu.png[/IMG]
-[size=4]{% for sergeant in division.generalSergeants %}
-    [profile={{ sergeant.clan_id }}][color={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/color][/profile]
+[table='align:center,width: 1000'][tr][td][center][img]http://i.imgur.com/Loipf3u.png[/img][/center]
+ 
+[center][IMG]http://i.imgur.com/dvDkFn6.png[/IMG]
+{% for leader in division.leaders %}
+        [size=5][profile={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/color][/profile][/size][url={{ leader.handle.fullURL }}][color=gold](STEAM)[/color][/url] - [COLOR=DeepSkyBlue][size=4]{{ leader.position.name }}[/size][/color]
 {% endfor %}
-            {%- if platoon.leader.handle -%}
-                [size=1][url={{ platoon.leader.handle.fullURL }}][color=gold](STEAM)[/color][/url][/size]
-            {% else %}
-                [size=1][color=red](STEAM)[/color][/size]
-            {%- endif -%}
-[/size][/center]
-
-[CENTER][IMG]http://i.imgur.com/U5B94xV.png[/IMG][/CENTER]
-
-[table='align:center, width: 1000']
-
+ 
+[IMG]http://i.imgur.com/9eokkKu.png[/IMG]
+    {% for sergeant in division.generalSergeants %}
+        [size=4][profile={{ sergeant.clan_id }}][color={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/color][/profile][/size][url={{ sergeant.handle.fullURL }}][color=gold](STEAM)[/color][/url]
+    {% endfor %}
+[/center][/td][/tr][/table]
+ 
+[center][IMG]http://i.imgur.com/U5B94xV.png[/IMG][/center]
+ 
+[table='align:center']
+ 
 {% for platoon in division.platoons %}
     {% if (loop.first) %}
         [tr][td]
     {% else %}
         [/td][td]
     {% endif %}
-
-    [size=5][b][color=purple]Squad Commander[/color][/b][/size]
+[img]{{ platoon.logo }}[/img]
+[size=5][b][color=purple]Squad Commander[/color][/b][/size]
     {% if platoon.leader %}
-        [size=5][b][profile={{ platoon.leader.clan_id }}][color=cyan] {{ platoon.leader.present().rankName }}[/color][/profile][/b][/size]
-        {%- if platoon.leader.handle -%}
-            [url={{ platoon.leader.handle.fullURL }}][color=gold](STEAM)[/color][/url]
-        {% else %}
-            [color=red](STEAM)[/color]
-        {%- endif -%}
-    {% else %}
-        [size=5][color=red][b]{{ TBD }}[/b][/color][/size]
-    {% endif %}
-
-    [size=1][list=1]
+          [size=5][b][profile={{ platoon.leader.clan_id }}][color=cyan] {{ platoon.leader.present().rankName }}[/color][/profile][/b][/size]
+              {%- if platoon.leader.handle -%}
+                    [url={{ platoon.leader.handle.fullURL }}][color=gold](STEAM)[/color][/url]
+               {% else %}
+                    [color=red](STEAM)[/color]
+                {%- endif -%}
+{% else %}
+    [size=5][color=red][b]{{ TBD }}[/b][/color][/size]
+{% endif %}
+ 
+[size=1][list=1]
     {% for member in squad.members %}
         [*][b][profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile][/b]
         {%- if member.handle -%}
-            [url={{ member.handle.fullURL }}[color=gold](STEAM)[/color][/url]
+            [url={{ member.handle.fullURL }}][color=gold] (STEAM) [/color][/url]
         {% else %}
             [color=red](STEAM)[/color]
         {%- endif -%}
     {% endfor %}
-    [/list][/size]
-
-
-    {% for squad in platoon.squads %}
-        [size=5][b][color=green]Squad Leader[/color][/b][/size]
-        {% if squad.leader %}
-            [size=5][b][profile={{ squad.leader.clan_id }}][color=red] {{ squad.leader.present().rankName }} [/color][/profile][/b][/size]
-            {% if squad.leader.handle -%}
-                [url={{ squad.leader.handle.fullURL }}][color=gold](STEAM)[/color][/url]
-            {% else %}
-                [color=red](STEAM)[/color]
-            {%- endif -%}
-
+[/list][/size]
+ 
+ 
+{% for squad in platoon.squads %}
+    [size=5][b][color=green]Squad Leader[/color][/b][/size]
+    {% if squad.leader %}
+        [size=5][b][profile={{ squad.leader.clan_id }}][color=red] {{ squad.leader.present().rankName }} [/color][/profile][/b][/size]
+    {% if squad.leader.handle -%}
+        [url={{ squad.leader.handle.fullURL }}][color=gold](STEAM)[/color][/url]
+    {% else %}
+        [color=red](STEAM)[/color]
+    {%- endif -%}
+ 
+{% else %}
+    [size=5][color=red][b]{{ TBD }}[/b][/color][/size]
+{% endif %}
+ 
+[size=1][list=1]
+    {% for member in squad.members %}
+        [*][b][profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile][/b]
+        {%- if member.handle -%}
+            [url={{ member.handle.fullURL }}][color=gold] (STEAM) [/url][/color]
         {% else %}
-            [size=5][color=red][b]{{ TBD }}[/b][/color][/size]
-        {% endif %}
-
-        [size=1][list=1]
-        {% for member in squad.members %}
-            [*][b][profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile][/b]
-            {%- if member.handle -%}
-                [url={{ member.handle.fullURL }}[color=gold](STEAM)[/color][/url]
-            {% else %}
-                [color=red](STEAM)[/color]
-            {%- endif -%}
-        {% endfor %}
-        [/list][/size]
-
+            [color=red](STEAM)[/color]
+        {%- endif -%}
     {% endfor %}
-
+[/list][/size]
+ 
+{% endfor %}
+ 
 {% endfor %}
 [/td]
-
+ 
 {% if loop.index is divisible by (3) %}
     [/tr][tr]
 {% endif %}
+[/table]
+ 
+ 
+{% if division.partTimeMembers.count() > 0 %}
+ 
+    [center][size=3][color=red][b]Part Time Members[/b][/color][/size][/center]
+       
+        {% for partTimer in division.partTimeMembers %}
+            [center][profile={{ partTimer.clan_id }}]{{ partTimer.present().rankName }}[/profile][/center]
+     {% endfor %}
+   
+{% endif %}
+ 
+ 
+[table='align:center,width: 1000'][tr][td]
+{% if (division.leave) %}
+    [center][size=3][color=red][b]Leaves of Absence[/b][/color][/size]
+    [size=2]
+    {% for member in division.leave %}
+        {% if member.leave.expired %}
+            [profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile] - [color=red]{{ member.leave.date }} [EXPIRED][/color] - {{ member.leave.reason }}
+        {% else %}
+            [profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile] - {{ member.leave.date }} - {{ member.leave.reason }}
+        {% endif %}
+    {% endfor %}
+    [/size]
+    [/center]
+{% endif %}
+[/td][/tr]
 [/table]
