@@ -1,0 +1,270 @@
+{# some variables #}
+{% set TBA = "[color=#FFFFFF]TBA[/color]" %}
+
+{# division graphic header #}
+[CENTER][IMG]https://i.imgur.com/k1O03QN.png[/IMG]
+
+
+[IMG]https://i.imgur.com/z7Phr1h.png[/IMG]
+
+
+{# iterate leaders #}
+{# commanding officer #}
+[IMG]https://i.imgur.com/CH4tAiJ.png[/IMG]
+	{%~ for leader in division.leaders %}
+		{%- if leader.position.name starts with 'C' %}
+			{{- null }}[SIZE=4][PROFILE={{ leader.clan_id }}][COLOR={{ leader.rank.color }}]{{ leader.present().rankName }}[/COLOR][/PROFILE][/SIZE] | [SIZE=2][URL="{{ leader.handle.full_url }}"]CMDR {{ leader.handle.pivot.value }}[/URL][/SIZE]
+		{%- endif %}
+	{%- endfor %}
+
+
+
+{# executive officer #}
+[IMG]https://i.imgur.com/kHUSQgz.png[/IMG]
+	{%~ for leader in division.leaders %}
+    	{%- if leader.position.name starts with 'E' %}
+        	{{- null }}[SIZE=4][PROFILE={{ leader.clan_id }}][COLOR={{ leader.rank.color }}]{{ leader.present().rankName }}[/COLOR][/PROFILE][/SIZE] | [SIZE=2][URL="{{ leader.handle.full_url }}"]CMDR {{ leader.handle.pivot.value }}[/URL][/SIZE]
+		{%- endif %}
+	{%- endfor %}
+
+
+
+{# iterate general sergeants #}
+[IMG]https://i.imgur.com/tCHT35H.png[/IMG]
+{% for sergeant in division.generalSergeants %}
+	{{- null }}[SIZE=4][PROFILE={{ sergeant.clan_id }}][COLOR={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/COLOR][/PROFILE][/SIZE] | [SIZE=2][URL="{{ sergeant.handle.full_url }}"]CMDR {{ sergeant.handle.pivot.value }}[/URL][/SIZE]
+{% else %}
+[I]None assigned.[/I]
+{% endfor %}
+
+
+{# iterate assigned staff sergeant #}
+[IMG]https://i.imgur.com/Dt7hHmX.png[/IMG]
+{% for ssgt in division.staffSergeants %}
+   {% set this_ssgt_handle = null %} {# define a variable to use inside handles loop but make its scope this loop #}
+   {{- null }}[SIZE=4][PROFILE={{ ssgt.clan_id }}][COLOR={{ ssgt.rank.color }}]{{ ssgt.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+   {%- for ssgt_handle in ssgt.handles %}
+      {%- set this_ssgt_handle = ssgt_handle %} {# Set variable for use outside loop #}
+   {%- endfor %}
+   {%- if this_ssgt_handle.id is not empty %}
+   {{- null }} | [SIZE=2][URL="{{ this_ssgt_handle.full_url }}"]CMDR {{ this_ssgt_handle.pivot.value }}[/URL][/SIZE]
+   {%- else %}
+   {{- null }} | [I]No CMDR[/I]
+   {%- endif %}
+{% else %}
+[I]None assigned.[/I]
+{% endfor %}
+[/CENTER]
+
+
+[HR][/HR]
+
+{# Following sections for generating full-member structures #}
+[TABLE="Align: Center"]
+{# iterate platoons #}
+{% for platoon in division.platoons %}
+[TR]
+[TD][SIZE=5][CENTER][COLOR=#B22222]{{ platoon.name }}[/COLOR][/CENTER]
+[/SIZE][/TD]
+[TD][/TD]
+[TD][/TD]
+[TD][/TD]
+[/TR]
+[TR]
+[TD][CENTER]{% if platoon.logo %}
+[IMG]{{ platoon.logo }}[/IMG]
+{%- else %}
+[I]No logo[/I]
+{%- endif %}[/CENTER]
+[/TD]
+[TD][SIZE=1][COLOR=#878787][I]LED BY[/I][/COLOR][/SIZE]
+[PROFILE={{ platoon.leader.clan_id }}][COLOR="#008080"][SIZE=3]{{ platoon.leader.present().rankName }}[/SIZE][/COLOR][/PROFILE]
+[URL="{{ platoon.leader.handle.full_url }}"][COLOR=#878787]CMDR {{ platoon.leader.handle.pivot.value }}[/COLOR][/URL][/TD]
+[TD][/TD]
+[TD][/TD]
+[/TR]
+[TR]
+[TD][CENTER]+++++++++++++++++++++++++[/CENTER][/TD]
+[TD][CENTER]+++++++++++++++++++++++++[/CENTER][/TD]
+[TD][CENTER]+++++++++++++++++++++++++[/CENTER][/TD]
+[TD][CENTER]+++++++++++++++++++++++++[/CENTER][/TD]
+[/TR]
+[TR]
+[TD][CENTER][IMG]https://i.imgur.com/kiheH3w.png[/IMG][/CENTER][/TD]
+[TD][CENTER][IMG]https://i.imgur.com/NjddiHE.png[/IMG][/CENTER][/TD]
+[TD][CENTER][IMG]https://i.imgur.com/IXmLKuv.png[/IMG][/CENTER][/TD]
+[TD][CENTER][IMG]https://i.imgur.com/T9JM3zZ.png[/IMG][/CENTER][/TD]
+[/TR]
+[TR]
+	{#- Iterate squads once for just the names of the leaders #}
+    {%- set squadcount = 0 %}
+	{%- for squad in platoon.squads %}
+    {%- if squad.leader.clan_id > 0 %}
+
+[TD][CENTER][PROFILE={{ squad.leader.clan_id }}][COLOR="#6dcdd5"][B]{{ squad.leader.present().rankName }}[/B][/COLOR][/PROFILE]
+[SIZE=1][URL="{{ squad.leader.handle.full_url }}"][COLOR="#d73d0b"]CMDR {{ squad.leader.handle.pivot.value }}[/COLOR][/URL][/SIZE][/CENTER][/TD]
+	{%- else %}
+    	[TD][CENTER][COLOR="#878787"][I]None Assigned[/I][/COLOR][/CENTER][/TD]
+    {%- endif %}
+	{%- set squadcount = squadcount + 1 %}
+    {%~ endfor %}
+    {%- if squadcount < 4 %}
+    	{%- for i in squadcount..3 %}
+
+[TD][CENTER][COLOR="#878787"][I]Not In Use[/I][/COLOR][/CENTER][/TD]
+    	{%- endfor %}
+    {%- endif %}
+[/TR]
+[TR]
+[TD][/TD]
+[TD][/TD]
+[TD][/TD]
+[TD][/TD]
+[/TR]
+[TR]
+[TD][/TD]
+[TD][/TD]
+[TD][/TD]
+[TD][/TD]
+[/TR]
+[TR]
+	{#- Iterate squads again for all the remaining full-time members in each squad #}
+    {%- set squadcount = 0 %}
+	{%- for squad in platoon.squads %}
+
+[TD][CENTER]
+    	{%- for member in squad.members %}
+
+
+[PROFILE={{ member.clan_id }}][COLOR="#B22222"]{{ member.present().rankName }}[/COLOR][/PROFILE]
+			{%- if member.handle.pivot.value is not empty %}
+   				{{~ "\n" }}[SIZE=1][URL="{{ member.handle.full_url }}"][COLOR=#878787]CMDR {{ member.handle.pivot.value }}[/COLOR][/URL][/SIZE]
+   			{%- else %}
+   				{{~ "\n" }}[SIZE=1][COLOR=#FF0033][B][I]No CMDR[/I][/B][/COLOR][/SIZE]
+   			{%- endif %}
+        {%- endfor %}
+[/CENTER][/TD]
+	{%- set squadcount = squadcount + 1 %}
+	{%~ endfor %}
+    {%- if squadcount < 4 %}
+    	{%- for i in squadcount..3 %}
+
+[TD][/TD]
+    	{%- endfor %}
+    {%- endif %}
+[/TR]
+[TR]
+[TD][CENTER][COLOR=#454545]-------------------------
+
+[/COLOR][/CENTER][/TD]
+[TD][CENTER][COLOR=#454545]-------------------------
+
+[/COLOR][/CENTER][/TD]
+[TD][CENTER][COLOR=#454545]-------------------------
+
+[/COLOR][/CENTER][/TD]
+[TD][CENTER][COLOR=#454545]-------------------------
+
+[/COLOR][/CENTER][/TD]
+[/TR]
+[TR]
+[TD][/TD]
+[TD][/TD]
+[TD][/TD]
+[TD][/TD]
+[/TR]
+{% endfor %}
+[/TABLE]
+
+
+[HR][/HR]
+
+{# iterate part time members #}
+{# Batch command will divide into 6 columns and fill the remainder with '' #}
+[CENTER][IMG]https://i.imgur.com/T1DEw3S.png[/IMG]
+[SIZE=1][COLOR=#878787][I]There are {{ division.partTimeMembers|length }} part time members[/I][/COLOR][/SIZE]
+[TABLE="Align: Center"]
+		{%- for row in division.partTimeMembers|batch(6, '') %}
+        {{- null }}[TR]
+        	{% for member in row %}
+			{% if member %}
+            {{~ "\n" }}[TD]
+
+
+[PROFILE={{ member.clan_id }}][COLOR="{{ member.rank.color }}"]{{ member.present().rankName }}[/COLOR][/PROFILE]
+			{%- if member.handle.pivot.value is not empty %}
+   				{{~ "\n" }}[SIZE=1][URL="{{ member.handle.full_url }}"]CMDR {{ member.handle.pivot.value }}[/URL][/SIZE][/TD]
+   			{%- else %}
+   				{{~ "\n" }}[SIZE=1][COLOR=#878787][I]No CMDR[/I][/COLOR][/SIZE][/TD]
+   			{%- endif %}
+			{% else %}
+            	[TD][/TD]
+            {% endif %}
+            {% endfor %}
+		{{~ "\n" }}[/TR]
+        {% endfor %}
+[/TABLE]
+[/CENTER]
+
+
+{# iterate leaves of absence #}
+[CENTER][IMG]https://i.imgur.com/MFA3zwJ.png[/IMG]
+[TABLE="Align: Center"][TR][TD][B]CMDR Name[/B][/TD][TD][B]Date[/B][/TD][TD][B]Reason[/B][/TD][TD][B]Approver[/B][/TD][/TR]
+	{%~ for member in division.leave %}
+    {% if member.leave.expired %}
+    	{% set date = '[COLOR=#FF0000]' ~ member.leave.date ~ ' (EXPIRED)[/COLOR]' %}
+    {% else %}
+    	{% set date = '[COLOR=#878787]' ~ member.leave.date ~ '[/COLOR]' %}
+    {% endif %}
+    {% set approval = '[COLOR=#878787]' ~ member.leave.approver.name ~ '[/COLOR]' %}
+    	[TR]
+			[TD][PROFILE={{ member.clan_id }}][COLOR=#B22222]{{ member.present().rankName }}[/COLOR][/PROFILE][/TD][TD]{{ date }}[/TD][TD][COLOR=#878787]{{ member.leave.reason }}[/COLOR][/TD][TD]{{ approval }}[/TD]
+        [/TR]
+    {% set date = null %}
+    {% set approval = null %}
+	{%~ endfor %}
+[/TABLE]
+[/CENTER]
+
+{# Following sections taken from TC division and modified for ED division #}
+{# Defines each rank as a variable and assigns it a count of 0 before counting the rank #}
+{% set Recruits = 0 %}
+{% set Cadets = 0 %}
+{% set Privates = 0 %}
+{% set PrivatesFirst = 0 %}
+{% set Specialists = 0 %}
+{% set Officers = 0 %}
+
+{# Goes through every member and asks if the members rank abbreviation matches what is in the string (such as Pvt) #}
+{# If it does then it adds 1 to the variable associated with that rank, thus counting it #}
+{% for platoon in division.platoons %}
+  {% for squad in platoon.squads %}
+    {% for member in squad.members %}
+      {% if member.rank.abbreviation == "Rct" %}
+        {% set Recruits = Recruits + 1 %}
+      {% elseif member.rank.abbreviation == "Cdt" %}
+        {% set Cadets = Cadets + 1 %}
+      {% elseif member.rank.abbreviation == "Pvt" %}
+        {% set Privates = Privates + 1 %}
+      {% elseif member.rank.abbreviation == "Pfc" %}
+        {% set PrivatesFirst = PrivatesFirst + 1 %}
+      {% elseif member.rank.abbreviation == "Spec" %}
+        {% set Specialists = Specialists + 1 %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+
+{# Instead of counting low population ranks, calculates officers as being the total division members, takeaway all already accounted members #}
+{% set Officers = division.memberCount - Recruits - Cadets - Privates - PrivatesFirst - Specialists %}
+
+{# States how many of each rank there are in the division #}
+[CENTER][IMG]https://i.imgur.com/OCQsiu1.png[/IMG][COLOR="#878787"]
+[COLOR="#B22222"]Recruits[/COLOR] - {{ Recruits }} [COLOR=#454545]({{ ((Recruits/division.memberCount)*100)|round }}%)[/COLOR]
+[COLOR="#B22222"]Cadets[/COLOR] - {{ Cadets }} [COLOR=#454545]({{ ((Cadets/division.memberCount)*100)|round }}%)[/COLOR]
+[COLOR="#B22222"]Privates[/COLOR] - {{ Privates }} [COLOR=#454545]({{ ((Privates/division.memberCount)*100)|round }}%)[/COLOR]
+[COLOR="#B22222"]Private First Class[/COLOR] - {{ PrivatesFirst }} [COLOR=#454545]({{ ((PrivatesFirst/division.memberCount)*100)|round }}%)[/COLOR]
+[COLOR="#B22222"]Specialists[/COLOR] - {{ Specialists }} [COLOR=#454545]({{ ((Specialists/division.memberCount)*100)|round }}%)[/COLOR]
+[COLOR="#029E4C"]Officers[/COLOR] - {{ Officers }} [COLOR=#454545]({{ ((Officers/division.memberCount)*100)|round }}%)[/COLOR]
+[/COLOR][COLOR=#454545]-------------------------[/COLOR]
+[COLOR="#878787"]There are {{ division.memberCount }} members in the division.[/COLOR][/CENTER]
