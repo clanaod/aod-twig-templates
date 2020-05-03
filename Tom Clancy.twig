@@ -15,6 +15,26 @@
 [/size]
 
 [table="align: center, width:1000"][tr]
+[td][size=2][color="#FF8C00"][size=3]Sergeants[/size][/color]
+
+{% for platoon in division.platoons %}
+  {% if platoon.leader %}
+    {% if platoon.leader.rank.name == 'Sergeant' %}
+      [profile={{ platoon.leader.clan_id }}]{{ platoon.leader.rank.abbreviation }}_{{ platoon.leader.name }}[/profile]
+    {% endif %}
+  {% endif %}
+  {% for squad in platoon.squads %}
+    {% if squad.leader.rank.name == 'Sergeant' %}
+      [profile={{ squad.leader.clan_id }}]{{ squad.leader.rank.abbreviation }}_{{ squad.leader.name }}[/profile]
+    {% endif %}
+    {% for member in squad.members %}
+      {% if member.rank.name == 'Sergeant' %}
+      [profile={{ member.handle.clan_id }}]{{ member.rank.abbreviation }}_{{ member.name }}[/profile]
+      {% endif -%}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}[/size][/td]
+
 [td][size=2][color="#FF8C00"][size=3]Corporals[/size][/color]
 
 {% for platoon in division.platoons %}
@@ -71,6 +91,26 @@
       {% if member.rank.name == 'Trainer' %}
       [profile={{ member.handle.clan_id }}]{{ member.rank.abbreviation }}_{{ member.name }}[/profile]
       {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}[/size][/td]
+
+[td][size=2][color="#FF8C00"][size=3]Specialists[/size][/color]
+
+{% for platoon in division.platoons %}
+  {% if platoon.leader %}
+    {% if platoon.leader.rank.name == 'Specialist' %}
+      [profile={{ platoon.leader.clan_id }}]{{ platoon.leader.rank.abbreviation }}_{{ platoon.leader.name }}[/profile]
+    {% endif %}
+  {% endif %}
+  {% for squad in platoon.squads %}
+    {% if squad.leader.rank.name == 'Specialist' %}
+      [profile={{ squad.leader.clan_id }}]{{ squad.leader.rank.abbreviation }}_{{ squad.leader.name }}[/profile]
+    {% endif %}
+    {% for member in squad.members %}
+      {% if member.rank.name == 'Specialist' %}
+      [profile={{ member.handle.clan_id }}]{{ member.rank.abbreviation }}_{{ member.name }}[/profile]
+      {% endif -%}
     {% endfor %}
   {% endfor %}
 {% endfor %}[/size][/td]
@@ -333,7 +373,6 @@ AOD_sNaKe
 [color="#FFDD99"]Cadets[/color] - {{ Cadets }}
 [color="#FFDD99"]Privates[/color] - {{ Privates }}
 [color="#FFDD99"]Private First Class[/color] - {{ PrivatesFirst }}
-[color="#FFDD99"]Specialists[/color] - {{ Specialists }}
 [color="#FF8C00"]Officers[/color] - {{ Officers }}
 
 {# States how many members are in the division #}
