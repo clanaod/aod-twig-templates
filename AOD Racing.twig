@@ -1,0 +1,75 @@
+{% set TBA = "[COLOR=orange]TBA[/COLOR][/SIZE]" %}
+[table='align:center,width:700'][tr][td]
+[center]
+{# Division Leaders Header #}
+[SIZE=6][COLOR=#F04100][B][I][U]Division Leaders[/U][/I][/B][/color][/size]
+[SIZE=5]
+{# iterate leader #}
+{% for leader in division.leaders %}
+	{{leader.position.name}} - [profile={{leader.clan_id}}][color={{leader.rank.color}}]{{leader.present().rankName}}[/color][/profile] - {% if leader.handle %}[url={{leader.handle.fullUrl}}]iRacing Profile[/url]{%- endif -%}
+{% endfor %}
+[/size]
+[/td]
+[/tr]
+[/center]
+[/table]
+
+{# Iterate Platoons #}
+{% for platoon in division.platoons %}
+[table='align:center,width:800'][tr][td][center]
+	{% if platoon.name %}
+		[SIZE=6][COLOR=#F04100][b]{{platoon.name}}[/b][/COLOR][/SIZE]
+	{% endif %}
+
+	[SIZE=4]
+	[COLOR=#FFA500]Platoon Leader: [/COLOR]{%if platoon.leader.handle.pivot.value %}
+	[PROFILE={{platoon.leader.clan_id}}]
+	[COLOR=#AFF000]{{platoon.leader.present().rankName}}[/COLOR][/PROFILE] - {% if platoon.leader.handle %}[url={{platoon.leader.handle.fullUrl}}]iRacing Profile[/url]{% endif %}
+	{% else %}
+		{{TBA}}
+	{% endif %}
+	[/SIZE][/td][/tr][/table][/center]
+
+	{# iterate squads #}
+	[table='align:center, width:800'][tr]
+	{% for squad in platoon.squads %}
+		[td="width:50%"][center]
+			[SIZE=3][COLOR=#FFD700]{{squad.name}}[/COLOR][/SIZE]
+			[SIZE=3][COLOR=#FFA500]Squad Leader:[/COLOR]{% if squad.leader.handle.pivot.value %} 
+			[PROFILE={{squad.leader.clan_id}}][COLOR=#AFF000]{{ squad.leader.present().rankName}}[/COLOR][/PROFILE] - {% if squad.leader.handle %}[url={{squad.leader.handle.fullUrl}}]iRacing Profile[/url]{%- endif -%}[/SIZE]
+			{% else %} {# no squad leader assigned #}
+			{{TBA}}
+			{% endif %}
+			[size=2][color=goldenrod]AOD Name - iRacing Profile Link[/color][list]
+			{% for member in squad.members %}
+    		[*][size=2][profile={{ member.clan_id }}][color=#00aff0]{{ member.present().rankName }}[/color][/profile] - {% if member.handle %}[url={{ member.handle.fullUrl }}]iRacing Profile[/url][/size]{%- endif -%}
+			{% endfor %}
+        	[/size][/list]
+		[/td][/center]
+	{% endfor %}
+	[/tr][/table]
+{% endfor %}
+
+{# iterate part time members #}
+[center][size=6][color=#F04100][b]Part Time Members[/b][/color][/size]
+		[list]
+		[size=2]
+		{%- for member in division.partTimeMembers -%}
+			[*][profile={{ member.clan_id }}][color=#00aff0]{{ member.present().rankName }}[/color][/profile] - {% if member.handle %}[url={{ member.handle.fullUrl }}]iRacing Profile[/url]{% endif %}
+		{% endfor %}
+		[/size]
+        [/list]
+[/center]
+
+{# iterate leaves of absence #}
+[center][size=6][color=#F04100][b]Leaves of Absence[/b][/color][/size]
+	[color=#FFFFFF][size=2]
+    {% for member in division.leave %}
+		{% if member.leave.expired %}
+			{{ member.present().rankName }} - [color=red]{{ member.leave.date }} (EXPIRED)[/color] - {{ member.leave.reason }}
+		{% else %}
+			{{ member.present().rankName }} - {{ member.leave.date }} - {{ member.leave.reason }}
+		{% endif %}
+	{% endfor %}
+	[/size][/color]
+[/center]
