@@ -1,0 +1,296 @@
+{# Division Structure 30/12/2018 #}
+
+{# As always, if you need to edit this, please save this code as a text document and edit a fresh copy in a code editor, such as Notepad++ #}
+{# Please put comments to anything you change, it makes everybodys life easier #}
+
+
+{% set TBA = "[color=#40E0D0]TBA[/color]" %}
+{% set max_platoons = 5 %}
+[table='align:center,width: 800'][tr][td][img]https://i.imgur.com/GnXYgFL.png[/img]
+
+[center][size=4][color=#FF0000]Division Leaders[/color]
+[/size]																				{# Notes Division Leaders, CO and XO's #}
+[size=4]{% for leader in division.leaders %}
+	[profile={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/color][/profile] - {{ leader.position.name }} - [color="#00B4FF"]{{ leader.handle.pivot.value }}[/color]
+	{% endfor %}
+[/size]
+
+[size=4][color=#FF0000]General Sergeants
+[/color]																																	{# General Sergeants Section #}
+	[profile=27004][color=#ff9933]MSgt 31drew31[/color][/profile] - [color="#00B4FF"]AOD31drew31#1987[/color]								{# Note whilst we have company leaders this must be hard coded in #}
+[/size][/center][/td][/tr][/table]																											{# As the tracker has company leaders assigned as general sergeants #}
+
+[HR][/HR]
+
+{#[table="width: 1300, align: center"]#}																										{# Company Leader Section #}
+{#[tr]
+	[td][CENTER][SIZE=4][COLOR="#FF0000"]Company Leader[/COLOR][/SIZE][/CENTER][/td]
+	[td][CENTER][SIZE=4][COLOR="#FF0000"]Company Leader[/COLOR][/SIZE][/CENTER][/td]#}														{# All BB Code, no description needed #}
+{#[/tr]
+[tr]
+	[td][CENTER][SIZE=4][profile=60264][COLOR="#00FF00"]Sgt Forcie[/COLOR][/profile] - [color="#00B4FF"]forcie#2969[/color][/SIZE][/CENTER][/td]
+	[td][CENTER][SIZE=4][profile=50701][COLOR="#00FF00"]Sgt Mjwitz[/COLOR][/profile] - [color="#00B4FF"]Mjwitz#1251[/color][/SIZE][/CENTER][/td]
+[/tr]
+[/table]#}																																	{# End of Company Leader Section #}
+
+
+[table='align:center,width: 1400']																											{# This section starts the table and begins iterating platoons. #}
+{% for platoon in division.platoons %}																										{# The IF statement asks if it is the first platoon to be iterated #}
+	{% if (loop.first) %}																													{# If it is the first, then it starts the first row and column of #}
+		[tr][td]																															{# the table, if it is not, then it uses BB code to finish the previous #}
+	{% else %}																																{# Column, and start a new one #}
+		[/td][td]
+	{% endif %}
+	[size=4][color=#FF0000]{{ platoon.name }}[/Color][/size]																				{# States Platoon Name #}
+	
+	[size=3][color=#40E0D0]Platoon Leader[/color][/size]
+	{% if platoon.leader %}																													{# Platoon Leader Section #}
+		[size=3][profile={{ platoon.leader.clan_id }}][color=#00FF00] {{ platoon.leader.present().rankName }}  [/color][/profile]  
+			{%- if platoon.leader.handle -%}
+				- [color="#00B4FF"]{{ platoon.leader.handle.pivot.value }}[/color]															{# Establishes whether or not the given platoon has a leader #}
+			{% else -%}																														{# First if statement asks if there is a leader, if there is, then it calls it #}
+				[color=#FF0000]N/A																											{# Nested If statement, asks if the platoon leader has a battletag, if yes, calls it #}
+				[/color] 																													{# If no puts TBD #}
+			{%- endif -%}[/size]
+	{% else %} 																																{# Runs as an else if there is no platoon leader #}
+		[color=#40E0D0]{{ TBD }}[/color]
+		
+	{% endif %}																																{# End of Platoon Leader section #}
+	{#	[IMG]{{ platoon.logo }}[/IMG]	#}
+	
+																																			{# Squad Iteration section. Iterates first squad of each platoon #}
+    {% for squad in platoon.squads|slice(0, 1) %}																							{# Slice command, dictates starting point in the squad list and number of squads per row #}
+{% if squad.name %}																															{# As this is the first squad for each platoon it is set to 0 start and set to 1 as we only want 1 squad per row #}
+        	[size=3][color=#FF0000]{{ squad.name }}[/Color]
+			[/size]																															{# Asks if the squad has a name, if not puts TBD #}
+{% else %}
+    		[size=3]TBD[/size]
+{% endif %}
+            [size=3][color=#40E0D0]Squad Leader[/color][/size]
+		{% if squad.leader.handle.pivot.value %}																												{# Asks if there is a squad leader assigned, if yes puts in their rank and name #}
+			[size=3][profile={{ squad.leader.clan_id }}][color=#FFA500] {{ squad.leader.present().rankName }}  [/color][/profile] - [color="#00B4FF"]{{ squad.leader.handle.pivot.value }}
+            [/color][/size]  						           																					
+		{% else %}
+			[size=3][color=#FFA500] TBA [/color] - [color="#00B4FF"]TBA
+            [/color][/size] 
+		{% endif %}
+																																			{# Begins iterating directly recruited squad members #}
+[size=1][list]
+{% for member in squad.members %}
+            {% if member.recruiter_id == squad.leader.clan_id %}																			{# It does this by cycling through every member of the squad and asking if the members recruiter ID matchers #}
+                [*][profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile][COLOR="#DDA0DD"]*[/COLOR] - [color="#00B4FF"]{{ member.handle.pivot.value }}[/color]
+             {% endif %}
+         {% endfor %}
+[/size][/list][size=1][list]																												{# Begins iterating non-directly recruited squad members #}
+{% for member in squad.members %}
+            {% if member.recruiter_id != squad.leader.clan_id or member.recruiter_id == null %}												{# It does this in the same way as with direct recruits, except it asks #}
+                [*][profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile] - [color="#00B4FF"]{{ member.handle.pivot.value }}[/color]
+			{% endif %}
+		{% endfor %}
+[/size][/list]
+{% endfor %} 																																{# ends squad iteration #}
+{% endfor %} 																																{# ends platoon iteration #}
+[/td]
+[/tr]
+[tr]
+[/tr]
+
+
+																																										
+																																										
+
+
+
+{% for platoon in division.platoons %}																										{# This section does the second row of squads, can be seen as the slice start command has #}
+{% if (loop.first) %}																														{# been increased by 1, any alterations made to the previous section will need to be put here as well #}
+		[tr][td]
+        [color=#FF0000][/Color] 																											{# This is the same for any further identical blocks of code #}
+	{% else %}
+		[/td][td]
+	{% endif %}
+	{# iterate squad #}
+    {% for squad in platoon.squads|slice(1, 1) %}																														
+{% if squad.name %}
+        	[size=3][color=#FF0000]{{ squad.name }}[/Color][/size]
+{% else %}
+    		[size=3]Untitled[/size]
+{% endif %}
+            [size=3][color=#40E0D0]Squad Leader[/color][/size]
+		{% if squad.leader.handle.pivot.value %}																												{# Asks if there is a squad leader assigned, if yes puts in their rank and name #}
+			[size=3][profile={{ squad.leader.clan_id }}][color=#FFA500] {{ squad.leader.present().rankName }}  [/color][/profile] - [color="#00B4FF"]{{ squad.leader.handle.pivot.value }}
+            [/color][/size]  						           																					
+		{% else %}
+			[size=3][color=#FFA500] TBA [/color] - [color="#00B4FF"]TBA
+            [/color][/size] 
+		{% endif %}
+        
+{# iterate direct squad members #}
+[size=1][list]
+{% for member in squad.members %}
+            {% if member.recruiter_id == squad.leader.clan_id %}
+                [*][profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile][COLOR="#DDA0DD"]*[/COLOR] - [color="#00B4FF"]{{ member.handle.pivot.value }}[/color]
+             {% endif %}
+         {% endfor %}
+[/size][/list][size=1][list]
+{% for member in squad.members %}
+            {% if member.recruiter_id != squad.leader.clan_id or member.recruiter_id == null %}
+                [*][profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile] - [color="#00B4FF"]{{ member.handle.pivot.value }}[/color]
+			{% endif %}
+		{% endfor %}
+[/size][/list]
+{% endfor %} {# end squad iteration #}
+{% endfor %} {# end platoon iteration #}
+[/td]
+[/tr]
+[tr]
+[/tr]																																										
+
+
+
+
+
+
+
+																																				{# If you need another row of squads, copy this section and paste underneath #}
+																																				{# You MUST then increase the left variable in the slice command by 1 #}
+
+
+
+{% for platoon in division.platoons %}																											{# Copy from here #}					
+{% if (loop.first) %}																													
+		[tr][td]
+        [color=#FF0000][/Color] 
+	{% else %}																																
+		[/td][td]
+	{% endif %}
+	{# iterate squad #}
+    {% for squad in platoon.squads|slice(2, 1) %}																								{# Change this variable #}
+{% if squad.name %}
+        	[size=3][color=#FF0000]{{ squad.name }}[/Color][/size]
+{% else %}
+    		[size=3]Untitled[/size]
+{% endif %}
+            [size=3][color=#40E0D0]Squad Leader[/color][/size]
+		{% if squad.leader.handle.pivot.value %}																												{# Asks if there is a squad leader assigned, if yes puts in their rank and name #}
+			[size=3][profile={{ squad.leader.clan_id }}][color=#FFA500] {{ squad.leader.present().rankName }}  [/color][/profile] - [color="#00B4FF"]{{ squad.leader.handle.pivot.value }}
+            [/color][/size]  						           																					
+		{% else %}
+			[size=3][color=#FFA500] TBA [/color] - [color="#00B4FF"]TBA
+            [/color][/size] 
+		{% endif %}
+{# iterate direct squad members #}
+[size=1][list]
+{% for member in squad.members %}
+            {% if member.recruiter_id == squad.leader.clan_id %}
+                [*][profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile][COLOR="#DDA0DD"]*[/COLOR] - [color="#00B4FF"]{{ member.handle.pivot.value }}[/color]
+             {% endif %}
+         {% endfor %}
+[/size][/list][size=1][list]
+{% for member in squad.members %}
+            {% if member.recruiter_id != squad.leader.clan_id or member.recruiter_id == null %}
+                [*][profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile] - [color="#00B4FF"]{{ member.handle.pivot.value }}[/color]
+			{% endif %}
+		{% endfor %}
+[/size][/list]
+{% endfor %} {# end squad iteration #}
+{% endfor %} {# end platoon iteration #}
+[/td]
+[/tr]
+[tr]
+[/tr]																																				{# Copy up to here #}
+
+
+
+
+
+{% set Recruits = 0 %}																																{# Defines each rank as a variable and assigns it a count of 0 before counting the rank #}
+{% set Cadets = 0 %}														
+{% set Privates = 0 %}																																
+{% set PrivatesFirst = 0 %}
+{% set Specialists = 0 %}
+{% set Officers = 0 %}
+
+{% for platoon in division.platoons %}
+	{% for squad in platoon.squads %}
+		{% for member in squad.members %}																											{# Goes through every member and asks if the members rank abbreviation matches what is in the string (such as Pvt) #}
+        	{% if  member.rank.abbreviation == "Rct" %}																								{# If it does then it adds 1 to the variable associated with that rank, thus counting it #}
+            	{% set Recruits = Recruits + 1 %}
+            {% endif %}
+            {% if  member.rank.abbreviation == "Cdt" %}
+            	{% set Cadets = Cadets + 1 %}
+            {% endif %}
+            {% if  member.rank.abbreviation == "Pvt" %}
+            	{% set Privates = Privates + 1 %}
+            {% endif %}
+            {% if  member.rank.abbreviation == "Pfc" %}
+            	{% set PrivatesFirst = PrivatesFirst + 1 %}
+            {% endif %}
+            {% if  member.rank.abbreviation == "Spec" %}
+            	{% set Specialists = Specialists + 1 %}
+            {% endif %}
+        {% endfor %}
+	{% endfor %}
+{% endfor %}
+{% set Officers = division.memberCount - Recruits - Cadets - Privates - PrivatesFirst - Specialists %}												{# Instead of counting low population ranks, calculates officers as being the total division members, takeaway all already accounted members #}
+
+
+
+
+[/table]
+[HR][/HR]
+
+{% if division.partTimeMembers.count() > 0 %}																										{# Asks if there are any part time members of the division #}
+[table='align:center,width: 800'][tr][td]
+	[center][size=3][color=#40E0D0][b]Part Time Members[/b][/color][/size][/center][/td][/tr][/table]
+[table='align:center,width: 600'][tr][td]
+{% for partTimer in division.partTimeMembers %}
+			[profile={{ partTimer.clan_id }}]{{ partTimer.present().rankName }}
+			[/profile]																																{# If yes, iterates through all part time members, putting rank and name #}
+				{% if loop.index is divisible by(20) %}																								{# Creates a new column for every 20 members #}
+				[/td][td]
+		{% endif %}
+	{% endfor %}
+	[/td][/tr]
+	[/table]
+{% endif %}
+
+[table='align:center,width: 800'][tr][td]																											{# Iterates all members with an LOA #}
+{% if (division.leave) %}																															
+	[center][size=3][color=#FF0000][b]Leaves of Absence[/b][/color][/size]
+	[size=2]
+	{% for member in division.leave %}
+		{% if member.leave.expired %}
+			[profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile] - [color=red]{{ member.leave.date }} [EXPIRED][/color] - {{ member.leave.reason }}
+		{% else %}
+			[profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile] - {{ member.leave.date }} - {{ member.leave.reason }}
+		{% endif %}
+	{% endfor %}
+	[/size]
+	[/center]
+{% endif %}
+[/td][/tr]
+[/table]
+
+[CENTER][SIZE=4][color=#FF0000]Division Statistics[/SIZE][/CENTER][/COLOR]
+
+[CENTER][SIZE=3][COLOR="#40E0D0"]Recruits[/COLOR] - {{ Recruits }}																					{# States how many of each rank there are in the division #}
+[COLOR="#40E0D0"]
+Cadets[/COLOR] - {{ Cadets }}
+[COLOR="#40E0D0"]Privates[/COLOR] - {{ Privates }}
+[COLOR="#40E0D0"]Private First Class[/COLOR] - {{ PrivatesFirst }}
+[COLOR="#40E0D0"]Specialists[/COLOR] - {{ Specialists }}
+[COLOR="#40E0D0"]Officers[/COLOR] - {{ Officers }}
+
+
+[COLOR="#40E0D0"]Total Full Time Members[/COLOR] - {{ division.memberCount }}																		{# States how many members are in the division #}
+[COLOR="#40E0D0"]
+Total Part Time Members[/COLOR] - {{ division.partTimeMembers.count() }}[/SIZE][/CENTER]															{# States how many part time members are in the division #}
+
+{# Changelog #}
+{# Split squads between table rows - 2nd squads will always be in line with eachother between platoons #}
+{# Changed direct and indirect recruits, now both grouped together but purple star used to denote direct recruits #}
+{# Fixed multiple spacing issues #}
+{# Added descriptions to all of code #}
+{# Unknown Battletags now don't flag and will appear blank, this is to save on character count #}
+{# Added in profile links to company leaders #}
+{# Added in Division Statistics section that counts and displays numbers of members at each rank #}
