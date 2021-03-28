@@ -1,93 +1,169 @@
-{% set TBA = "[color=40E0D0]TBA[/color]" %}
-[table='align:center,width: 900'][tr][td][img]https://i.imgur.com/6Gw8Rds.jpg[/img]
+{# some variables #}
+{% set TBA = "[COLOR=#FFFFFF]TBA[/COLOR]" %}
 
-[center][size=5][color=Firebrick][b][u]Division Leadership[/u][/b][/color][/size]
+{# division graphic header #}
+[CENTER][IMG]https://i.imgur.com/1z39fnD.gif[/IMG]
+{% set numFTColumns = 3 %}
+{% set numPTColumns = 3 %}
 
-[size=4]{% for leader in division.leaders %}
-	[profile={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/color][/profile] - {{ leader.position.name }}
+{# iterate icons for joining, acception promos and posting an LOA#}
+[URL=https://www.clanaod.net/forums/showthread.php?t=212419&p=1789211&viewfull=1#post1789211][IMG]https://i.imgur.com/xsdjPLg.png[/IMG][/URL] [URL=https://warships.clanaod.net/forums/showthread.php?t=236714][IMG]https://i.imgur.com/GkEsZJ5.png[/IMG][/URL] [URL=https://www.clanaod.net/forums/showthread.php?t=212419&p=1789211&viewfull=1#post1789211][IMG]https://i.imgur.com/PResFBh.png[/IMG][/URL]
+
+
+[B][SIZE=5][COLOR=#33ccff]WoWS Division Command Staff[/COLOR][/SIZE][/B]
+
+{# Leaders #}
+	{% for leader in division.leaders %}
+        [SIZE=4][B][COLOR=f9f9f9]{{ leader.position.name }}[/COLOR][/B][/SIZE]
+		[SIZE=4][PROFILE={{ leader.clan_id }}][color={{ leader.rank.color }}]{{ leader.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+        [SIZE=2][COLOR=#33ccff][URL={{ leader.handle.fullUrl }}][/COLOR][/SIZE][COLOR="#00B4FF"]{{ replaceRegex(leader.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL]
+	
 	{% endfor %}
-[/size]
 
-[size=3][color=#40E0D0]General Sergeants[/color]
+{# iterate general sergeants #}
+[SIZE=3][COLOR=#FFD700]General Sergeants[/COLOR][/SIZE]
 {% for sergeant in division.generalSergeants %}
-	[profile={{ sergeant.clan_id }}][color={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/color][/profile]
-{% else %}
-
+   [SIZE=3][PROFILE={{ sergeant.clan_id }}][COLOR={{ sergeant.rank.color }}]{{ sergeant.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+   [SIZE=2][COLOR=#33ccff][URL={{ sergeant.handle.fullurl }}][/COLOR][COLOR="#00B4FF"]{{ replaceRegex(sergeant.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL][/SIZE]
 {% endfor %}
-[/size][/center][/td][/tr][/table]
 
-[table='align:center,width: 800']
 
-{% for platoon in division.platoons %}
-	{% if (loop.first) %}
-		[tr][td]
-	{% else %}
-		[/td][td]
-	{% endif %}
-	
-	[size=5][color=#FF0000]{{ platoon.name }}[/Color][/size]
-	
-	[size=3][color=#40E0D0]Fleet Admiral[/color][/size]
-	{% if platoon.leader %}
-		[size=3][profile={{ platoon.leader.clan_id }}][color=#FF0000]{{ platoon.leader.present().rankName }}  [/color][/profile][/size]
-	{% else %} {# no platoon leader #}
-		{{ TBA }}
-	{% endif %}
-	{# iterate squad #}
-    {% for squad in platoon.squads %}
+{# iterate assigned staff sergeant #}
+[SIZE=3][COLOR=#FFD700]Assigned Staff Sergeant[/COLOR][/SIZE]
+{% for ssgt in division.staffSergeants %}
+   [SIZE=3][PROFILE={{ ssgt.clan_id }}][COLOR={{ ssgt.rank.color }}]{{ ssgt.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+   [SIZE=2][COLOR=#33ccff][URL={{ ssgt.handle.fullUrl }}][/COLOR][COLOR="#00B4FF"]{{ replaceRegex(ssgt.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL]
+{% endfor %}
+[/SIZE][/CENTER]
 
-{% if squad.name %}
-        	[size=3][color=#FF0000]{{ squad.name }}[/Color][/size]
-{% else %}
-    		[size=3]Untitled[/size]
-{% endif %}
+
+
+{# Main division structure #}
+{%- for platoon in division.platoons -%} {# platoon loop #}
+{# Platoon Logo/Name and Platoon Leader #}
+[center]
+{{- platoon.logo ? "[img]" ~ platoon.logo ~ "[/img]" -}}
+[/center]
+
+    {# Platoon spacing #}
+
+[center]
+    {%- if platoon.name -%}
+
+		[size=5][color="#33ccff"]{{ platoon.name }}[/size][/color]
+   	{% else -%}
+		 
+    	{{ TBA }}
+  	{% endif -%}
+
+  	[size=4][color=#f9f9f9]Task Force Commander[/color][/size]
+	{% if platoon.leader.present() -%}
+		[SIZE=4][PROFILE={{ platoon.leader.clan_id }}][color={{ platoon.leader.rank.color }}]{{ platoon.leader.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+	{% else -%}
+		[SIZE=4][COLOR="#FF0000"]TBA[/COLOR][/SIZE]
+   	{% endif -%}
+  	{% if platoon.leader.handle.pivot.value -%}
+		[SIZE=2][COLOR=#33ccff][URL={{- platoon.leader.handle.fullUrl }}][/COLOR][/SIZE][COLOR="#00B4FF"]{{ replaceRegex(platoon.leader.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL]
+	{% endif -%}
+[/center]
+
+{# Squads #}
+[table="align: center"]
+  [tr]
+	{% for squad in platoon.squads %} {# squad loop #}  
+	[td="{{100 // loop.length}}%"]
+		[center]
+			{# squad logo #}  
+			{{- squad.logo ? "[img]" ~ squad.logo ~ "[/img]" -}}
+			{# end squad logo #}  
 			
-            [size=3][color=#40E0D0]Captain[/color][/size]
-		{% if squad.leader %}
-			[size=3][profile={{ squad.leader.clan_id }}][color=FFA500] {{ squad.leader.present().rankName }}  [/color][/profile][/size]
-		
-		{% else %} {# no squad leader #}
-			[COLOR=FFA500]TBA[/COLOR]
-		{% endif %}
-{# iterate direct squad members #}
-[size=2][list=1]
-	{% for member in squad.members %}
-                [*][profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile]
-     {% endfor %}
-[/list][/size]
-{% endfor %} {# end squad iteration #}
-{% endfor %} {# end platoon iteration #}
-[/td][/tr]
+			[COLOR=#33ccff][b][SIZE=4]{{ squad.name }}[/COLOR][/SIZE][/B] 
+		{% if squad.leader.present() -%}
+			[SIZE=3][PROFILE={{ squad.leader.clan_id }}][COLOR=#ff0000]{{ squad.leader.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+		{% else -%}
+			[SIZE=3][B][COLOR="#FF0000"]TBA[/COLOR][/B][/SIZE]
+		{% endif -%}
+		{% if squad.leader.handle.pivot.value -%}
+			[SIZE=2][COLOR=#33ccff][URL={{- squad.leader.handle.fullUrl }}][/COLOR][/SIZE][COLOR="#00B4FF"]{{ replaceRegex(squad.leader.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL]
+		{% endif -%}
+		[/center]
+	[/td]
+	{% endfor %}
+	[/tr]
+
+{# Squad Trainers #}
+[tr]
+	{% for squad in platoon.squads %}
+	[td]
+	[center]
+		[B][COLOR=#f9f9f9]Squad Trainer[/COLOR][/B]
+		{% if squad.members|filter((x) => x.rank.abbreviation == "Tr")|length > 0 -%}
+  		{% for squadTr in squad.members|filter((x) => x.rank.abbreviation == "Tr") %}
+    		[SIZE=2][PROFILE={{ squadTr.clan_id }}][COLOR=#ff0000]{{ squadTr.present().rankName }}[/COLOR][/PROFILE][/SIZE]
+		{% endfor %}
+		{% else -%}
+			[SIZE=2][B][COLOR="#FF0000"]TBA[/COLOR][/B][/SIZE]
+		{% endif -%}
+		{% if squadTr.handle.pivot.value -%}
+			[SIZE=2][COLOR=#33ccff][URL={{- squadTr.handle.fullUrl }}][/COLOR][/SIZE][COLOR="#00B4FF"]{{ replaceRegex(squadTr.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL]
+		{% endif -%}
+		[/center]
+	[/td]
+	{% endfor %}
+	[/tr]
+ 
+[tr]
+{# Squad Members #}
+	{% for squad in platoon.squads %}
+	[td]
+		[left][list=1]
+			{% for member in squad.members|filter((x) => (x.rank.abbreviation != "Tr")) -%} {# member loop #}
+  		  	{% if (member.present().rankName|length + member.present().pivot.value|length) > 24 -%} {# break on long member names and insert newline between name and handle #}
+						[*][SIZE=2][PROFILE={{ member.clan_id }}]{{ member.present().rankName }}[/PROFILE][/SIZE] - 
+                        [SIZE=2][COLOR=#33ccff][URL={{- member.handle.fullUrl }}][/COLOR][/SIZE][COLOR=#33ccff]{{ replaceRegex(member.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL]
+					{% else -%}
+						[*][SIZE=2][PROFILE={{ member.clan_id }}]{{ member.present().rankName }}[/PROFILE][/SIZE] - [SIZE=2][COLOR=#33ccff][URL={{- member.handle.fullUrl }}][/COLOR][/SIZE][COLOR=#33ccff]{{ replaceRegex(member.handle.pivot.value,"/.*-/", "" )}}[/COLOR][/URL]  
+				{% endif -%}
+			{% endfor -%} {# end member loop #} 
+		[/list][/left]
+	[/td]
+  {# end squad loop #}    
+{% endfor %} {# end split plat loop #}
+[/tr]
 [/table]
+{% endfor %} {# end platoon loop #}
 
-
+{# Part-Time Members #}
 {% if division.partTimeMembers.count() > 0 %}
-[table='align:center,width: 800'][tr][td]
-	[center][size=3][color=#40E0D0][b]Part Time Members[/b][/color][/size][/center][/td][/tr][/table]
-[table='align:center,width: 600'][tr][td]
-{% for partTimer in division.partTimeMembers %}
-			[profile={{ partTimer.clan_id }}]{{ partTimer.present().rankName }}[/profile]
-				{% if loop.index is divisible by(20) %}
-				[/td][td]
-		{% endif %}
+	[table="width: 80%, align: center"][tr][td][hr][/hr][/td][/tr][/table]
+    [center][size=3][color=#33ccff][b]Part-Time Members[/b][/color][/size][/center]
+    
+    [left]  
+    [table="align:center"]
+    [tr]
+    {% for row in division.partTimeMembers|batch(division.partTimeMembers.count() / numPTColumns) %}
+        [td="{{100 // loop.length}}%"]
+        	{% for column in row %}
+				[profile={{ column.clan_id }}]{{ column.present().rankName }}[/profile]
+          	{% endfor %}
+     	[/td]
 	{% endfor %}
-	[/td][/tr]
-	[/table]
+    [/tr]
+    [/table] 
+    [/left]
 {% endif %}
 
-[table='align:center,width: 800'][tr][td]
-{% if (division.leave) %}
-	[center][size=3][color=#40E0D0][b]Leaves of Absence[/b][/color][/size]
-	[size=2]
-	{% for member in division.leave %}
-		{% if member.leave.expired %}
-			[profile={{ member.clan_id }}] {{ member.present().rankName }}[/profile] - [color=red]{{ member.leave.date }} [EXPIRED][/color] - {{ member.leave.reason }}
-		{% else %}
-			[profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile] - {{ member.leave.date }} - {{ member.leave.reason }}
-		{% endif %}
-	{% endfor %}
-	[/size]
-	[/center]
+
+{# LOA #}
+{% if division.leave.count() > 0 %}
+[table="width: 80%, align: center"][tr][td][hr][/hr][/td][/tr][/table] {# another one to make things even #}
+
+[center][size=3][color=#FF8C00][b]Leave of Absence[/b][/color][/size][/center]
+    [center]
+    {% for member in division.leave %}
+   	 	[profile={{ member.clan_id }}]{{ member.present().rankName }}[/profile]{{ member.leave.expired ? "[color=red]" ~ member.leave.date ~ "(EXPIRED)[/color]" }} - {{ member.leave.reason }} 
+    {% endfor %}
+    [/center]
 {% endif %}
-[/td][/tr]
-[/table]
+
+[table="width: 80%, align: center"][tr][td][hr][/hr][/td][/tr][/table]
